@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Events · ClubHub{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Upcoming events</h1>
+    <p class="lead">Everything happening across clubs, in one place.</p>
+</section>
+
+<section>
+    {% if events %}
+        <ul class="event-list">
+            {% for event in events %}
+                <li>
+                    <a href="{% url 'hub:club_detail' event.club.pk %}"><strong>{{ event.title }}</strong></a>
+                    <span class="badge">{{ event.club.name }}</span>
+                    <span class="muted">{{ event.date|date:"D, M j, Y · H:i" }} · {{ event.location }}</span>
+                    <p>{{ event.description }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="muted">No events yet. Add them via the admin.</p>
+    {% endif %}
+</section>
+{% endblock %}

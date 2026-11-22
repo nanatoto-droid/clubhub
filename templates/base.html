@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ClubHub · Strathmore{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="{% url 'hub:home' %}" class="brand">
+                <span class="brand-dot"></span> ClubHub<span class="brand-sub">· Strathmore</span>
+            </a>
+            <nav class="nav">
+                <a href="{% url 'hub:home' %}">Clubs</a>
+                <a href="{% url 'hub:events' %}">Events</a>
+                <a href="{% url 'hub:join' %}" class="btn-ghost">Join a club</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>ClubHub · A Strathmore community project</p>
+        </div>
+    </footer>
+</body>
+</html>

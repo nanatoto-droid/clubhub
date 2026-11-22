@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}{{ club.name }} · ClubHub{% endblock %}
+
+{% block content %}
+<section class="detail">
+    <a href="{% url 'hub:home' %}" class="back">← All clubs</a>
+    <div class="detail-head">
+        {% if club.image %}
+            <img src="{{ club.image.url }}" alt="{{ club.name }}" class="detail-img">
+        {% else %}
+            <div class="detail-img card-img-placeholder">{{ club.name|slice:":1" }}</div>
+        {% endif %}
+        <div>
+            <h1>{{ club.name }}</h1>
+            <p class="lead">{{ club.tagline }}</p>
+            <a href="{% url 'hub:join' %}" class="btn">Join this club</a>
+        </div>
+    </div>
+    <p class="detail-desc">{{ club.description|linebreaks }}</p>
+</section>
+
+<section>
+    <h2 class="section-title">Upcoming events</h2>
+    {% if events %}
+        <ul class="event-list">
+            {% for event in events %}
+                <li>
+                    <strong>{{ event.title }}</strong>
+                    <span class="muted">{{ event.date|date:"D, M j, Y · H:i" }} · {{ event.location }}</span>
+                    <p>{{ event.description }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="muted">No events yet for this club.</p>
+    {% endif %}
+</section>
+{% endblock %}

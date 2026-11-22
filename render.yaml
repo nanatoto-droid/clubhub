@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: clubhub
+    runtime: python
+    plan: free
+    buildCommand: './build.sh'
+    startCommand: 'gunicorn clubhub.wsgi:application'
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.5
+      - key: SECRET_KEY
+        generateValue: true

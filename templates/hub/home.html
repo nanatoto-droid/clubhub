@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Clubs · ClubHub{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Find your people at Strathmore.</h1>
+    <p class="lead">Discover student clubs, catch upcoming events, and join in a couple of clicks.</p>
+</section>
+
+<section>
+    <h2 class="section-title">Clubs</h2>
+    {% if clubs %}
+        <div class="grid">
+            {% for club in clubs %}
+                <a href="{% url 'hub:club_detail' club.pk %}" class="card">
+                    {% if club.image %}
+                        <img src="{{ club.image.url }}" alt="{{ club.name }}" class="card-img">
+                    {% else %}
+                        <div class="card-img card-img-placeholder">{{ club.name|slice:":1" }}</div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h3>{{ club.name }}</h3>
+                        <p>{{ club.tagline }}</p>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="muted">No clubs yet. Add some via the admin.</p>
+    {% endif %}
+</section>
+{% endblock %}

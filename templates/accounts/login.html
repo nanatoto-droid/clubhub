@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Log in · ClubHub{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Welcome back</h1>
+    <p class="lead">Log in to your ClubHub account.</p>
+</section>
+
+<section class="form-card">
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="field">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" class="input" {% if field.value %}value="{{ field.value }}"{% endif %}>
+                {% if field.errors %}<div class="error">{{ field.errors }}</div>{% endif %}
+            </div>
+        {% endfor %}
+        {% if form.non_field_errors %}
+            <div class="error">{{ form.non_field_errors }}</div>
+        {% endif %}
+        <button type="submit" class="btn">Log in</button>
+        <p class="muted" style="margin-top:1rem;">No account? <a href="{% url 'accounts:signup' %}">Sign up</a></p>
+    </form>
+</section>
+{% endblock %}

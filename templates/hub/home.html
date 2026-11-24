@@ -2,31 +2,100 @@
 {% block title %}Clubs · ClubHub{% endblock %}
 
 {% block content %}
-<section class="hero">
-    <h1>Find your people at Strathmore.</h1>
-    <p class="lead">Discover student clubs, catch upcoming events, and join in a couple of clicks.</p>
+<section class="hero hero-split">
+    <div>
+        <h1>Find your people at Strathmore.</h1>
+        <p class="lead">Discover student clubs, catch upcoming events, and join in a couple of clicks.</p>
+        <div class="hero-actions">
+            <a href="{% url 'hub:events' %}" class="btn">See events</a>
+            {% if not user.is_authenticated %}
+                <a href="{% url 'accounts:signup' %}" class="btn">Create account</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="hero-stats">
+        <div><strong>{{ clubs|length }}</strong><span>Clubs</span></div>
+        <div><strong>{{ upcoming|length }}</strong><span>Upcoming</span></div>
+        <div><strong>24/7</strong><span>Online</span></div>
+    </div>
+</section>
+
+{% if featured %}
+<section>
+    <div class="section-head">
+        <h2 class="section-title">Featured clubs</h2>
+        <a href="{% url 'hub:home' %}" class="muted">View all →</a>
+    </div>
+    <div class="grid grid-featured">
+        {% for club in featured %}
+            <a href="{% url 'hub:club_detail' club.pk %}" class="card card-featured">
+                {% if club.image %}
+                    <img src="{{ club.image.url }}" alt="{{ club.name }}" class="card-img">
+                {% else %}
+                    <div class="card-img card-img-placeholder">{{ club.name|slice:":1" }}</div>
+                {% endif %}
+                <div class="card-body">
+                    <span class="badge">{{ club.get_category_display }}</span>
+                    <h3>{{ club.name }}</h3>
+                    <p>{{ club.tagline }}</p>
+                    <span class="muted small">{{ club.member_count }} member{{ club.member_count|pluralize }}</span>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<section>
+    <div class="section-head">
+        <h2 class="section-title">Latest &amp; upcoming events</h2>
+        <a href="{% url 'hub:events' %}" class="muted">All events →</a>
+    </div>
+    {% if upcoming %}
+        <ul class="event-list">
+            {% for event in upcoming %}
+                <li>
+                    {% if event.image %}<img src="{{ event.image.url }}" alt="{{ event.title }}" class="event-thumb">{% endif %}
+                    <a href="{% url 'hub:club_detail' event.club.pk %}"><strong>{{ event.title }}</strong></a>
+                    <span class="badge">{{ event.club.name }}</span>
+                    <span class="muted">{{ event.date|date:"D, M j · H:i" }} · {{ event.location }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="muted">No events yet.</p>
+    {% endif %}
 </section>
 
 <section>
-    <h2 class="section-title">Clubs</h2>
-    {% if clubs %}
-        <div class="grid">
-            {% for club in clubs %}
-                <a href="{% url 'hub:club_detail' club.pk %}" class="card">
-                    {% if club.image %}
-                        <img src="{{ club.image.url }}" alt="{{ club.name }}" class="card-img">
-                    {% else %}
-                        <div class="card-img card-img-placeholder">{{ club.name|slice:":1" }}</div>
-                    {% endif %}
-                    <div class="card-body">
-                        <h3>{{ club.name }}</h3>
-                        <p>{{ club.tagline }}</p>
-                    </div>
-                </a>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p class="muted">No clubs yet. Add some via the admin.</p>
-    {% endif %}
+    <h2 class="section-title">Browse by category</h2>
+    <div class="chips">
+        {% for value, label in categories %}
+            <span class="chip">{{ label }}</span>
+        {% endfor %}
+    </div>
+</section>
+
+<section>
+    <h2 class="section-title">All clubs</h2>
+    <div class="grid">
+        {% for club in clubs %}
+            <a href="{% url 'hub:club_detail' club.pk %}" class="card">
+                {% if club.image %}
+                    <img src="{{ club.image.url }}" alt="{{ club.name }}" class="card-img">
+                {% else %}
+                    <div class="card-img card-img-placeholder">{{ club.name|slice:":1" }}</div>
+                {% endif %}
+                <div class="card-body">
+                    <span class="badge">{{ club.get_category_display }}</span>
+                    <h3>{{ club.name }}</h3>
+                    <p>{{ club.tagline }}</p>
+                    <span class="muted small">{{ club.member_count }} member{{ club.member_count|pluralize }}</span>
+                </div>
+            </a>
+        {% empty %}
+            <p class="muted">No clubs yet. Add some via the admin.</p>
+        {% endfor %}
+    </div>
 </section>
 {% endblock %}

@@ -12,6 +12,7 @@
         <ul class="event-list">
             {% for event in events %}
                 <li>
+                    {% if event.image %}<img src="{{ event.image.url }}" alt="{{ event.title }}" class="event-thumb">{% endif %}
                     <a href="{% url 'hub:club_detail' event.club.pk %}"><strong>{{ event.title }}</strong></a>
                     <span class="badge">{{ event.club.name }}</span>
                     <span class="muted">{{ event.date|date:"D, M j, Y · H:i" }} · {{ event.location }}</span>

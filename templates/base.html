@@ -16,8 +16,19 @@
             <nav class="nav">
                 <a href="{% url 'hub:home' %}">Clubs</a>
                 <a href="{% url 'hub:events' %}">Events</a>
-                <a href="{% url 'hub:join' %}" class="btn-ghost">Join a club</a>
-            </nav>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'accounts:dashboard' %}">Dashboard</a>
+                    <span class="muted" style="color: var(--green-400);">{{ user.username }}</span>
+                    <form method="post" action="{% url 'accounts:logout' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-ghost" style="background:none; cursor:pointer; font: inherit;">Log out</button>
+                    </form>
+                    {% else %}
+                        <a href="{% url 'accounts:login' %}">Log in</a>
+                        <a href="{% url 'accounts:signup' %}" class="btn-ghost">Sign up</a>
+                    {% endif %}
+                </nav>
+            </div>
         </div>
     </header>
 

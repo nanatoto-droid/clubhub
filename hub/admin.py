@@ -4,7 +4,8 @@ from .models import Club, Event, JoinRequest
 
 @admin.register(Club)
 class ClubAdmin(admin.ModelAdmin):
-    list_display = ('name', 'tagline', 'created_at')
+    list_display = ('name', 'category', 'tagline', 'created_at')
+    list_filter = ('category',)
     search_fields = ('name',)
 
 

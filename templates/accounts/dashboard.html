@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard · ClubHub{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Dashboard</h1>
+    <p class="lead">
+        {% if is_staff_member %}
+            Review and approve join requests across all clubs.
+        {% else %}
+            Your requests, your clubs, and what's coming up.
+        {% endif %}
+    </p>
+</section>
+
+{% if is_staff_member %}
+
+    {% if requests %}
+        <ul class="event-list">
+            {% for r in requests %}
+                <li>
+                    <strong>{{ r.name }}</strong>
+                    <span class="badge">{{ r.club.name }}</span>
+                    <span class="status status-{{ r.status }}">{{ r.get_status_display }}</span>
+                    <span class="muted">{{ r.submitted_at|date:"M j, Y" }}</span>
+                    <p>{{ r.email }}{% if r.message %} — {{ r.message }}{% endif %}</p>
+
+                    {% if r.status == 'pending' %}
+                        <div class="action-row">
+                            <form method="post" action="{% url 'hub:approve_request' r.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm">Approve</button>
+                            </form>
+                            <form method="post" action="{% url 'hub:reject_request' r.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-danger">Reject</button>
+                            </form>
+                        </div>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="muted">No join requests yet.</p>
+    {% endif %}
+
+{% else %}
+
+    {# ---------- STUDENT VIEW ---------- #}
+
+    <section>
+        <h2 class="section-title">Your requests</h2>
+        {% if my_requests %}
+            <ul class="event-list">
+                {% for r in my_requests %}
+                    <li>
+                        <strong>{{ r.club.name }}</strong>
+                        <span class="status status-{{ r.status }}">{{ r.get_status_display }}</span>
+                        <span class="muted">{{ r.submitted_at|date:"M j, Y" }}</span>
+                        {% if r.message %}<p>{{ r.message }}</p>{% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="muted">
+                You haven't requested to join any club yet.
+                <a href="{% url 'hub:home' %}">Browse clubs →</a>
+            </p>
+        {% endif %}
+    </section>
+
+    <section>
+        <h2 class="section-title">Your clubs</h2>
+        {% if approved_clubs %}
+            <div class="grid">
+                {% for club in approved_clubs %}
+                    <a href="{% url 'hub:club_detail' club.pk %}" class="card">
+                        {% if club.image %}
+                            <img src="{{ club.image.url }}" alt="{{ club.name }}" class="card-img">
+                        {% else %}
+                            <div class="card-img card-img-placeholder">{{ club.name|slice:":1" }}</div>
+                        {% endif %}
+                        <div class="card-body">
+                            <span class="badge">{{ club.get_category_display }}</span>
+                            <h3>{{ club.name }}</h3>
+                            <p>{{ club.tagline }}</p>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="muted">Once a staff member approves your request, the club appears here.</p>
+        {% endif %}
+    </section>
+
+    {% if approved_clubs %}
+    <section>
+        <h2 class="section-title">Upcoming in your clubs</h2>
+        {% if events %}
+            <ul class="event-list">
+                {% for event in events %}
+                    <li>
+                        {% if event.image %}<img src="{{ event.image.url }}" alt="{{ event.title }}" class="event-thumb">{% endif %}
+                        <strong>{{ event.title }}</strong>
+                        <span class="badge">{{ event.club.name }}</span>
+                        <span class="muted">{{ event.date|date:"D, M j · H:i" }} · {{ event.location }}</span>
+                        <p>{{ event.description }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="muted">No upcoming events in your clubs yet.</p>
+        {% endif %}
+    </section>
+    {% endif %}
+
+{% endif %}
+{% endblock %}

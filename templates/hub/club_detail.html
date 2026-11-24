@@ -11,8 +11,10 @@
             <div class="detail-img card-img-placeholder">{{ club.name|slice:":1" }}</div>
         {% endif %}
         <div>
+            <span class="badge">{{ club.get_category_display }}</span>
             <h1>{{ club.name }}</h1>
             <p class="lead">{{ club.tagline }}</p>
+            <p class="muted">{{ member_count }} member{{ member_count|pluralize }} on ClubHub</p>
             <a href="{% url 'hub:join' %}" class="btn">Join this club</a>
         </div>
     </div>
@@ -25,6 +27,7 @@
         <ul class="event-list">
             {% for event in events %}
                 <li>
+                    {% if event.image %}<img src="{{ event.image.url }}" alt="{{ event.title }}" class="event-thumb">{% endif %}
                     <strong>{{ event.title }}</strong>
                     <span class="muted">{{ event.date|date:"D, M j, Y · H:i" }} · {{ event.location }}</span>
                     <p>{{ event.description }}</p>
